@@ -4,21 +4,15 @@
 
 (define input (map string->number (problem-input 1)))
 
-(define (deltas depths)
-  (for/list ([depth-prev depths]
-             [depth-next (rest depths)])
+(define (deltas nth-rest)
+  (for/list ([depth-prev input]
+             [depth-next (nth-rest input)])
     (- depth-next depth-prev)))
 
-(define window-sums
-  (for/list ([depth-prev input]
-             [depth-curr (rest input)]
-             [depth-next (rest (rest input))])
-    (+ depth-prev depth-curr depth-next)))
-
 (define part1
-  (count positive? (deltas input)))
+  (count positive? (deltas cdr)))
 
 (define part2
-  (count positive? (deltas window-sums)))
+  (count positive? (deltas cdddr)))
 
 (show-solution part1 part2)

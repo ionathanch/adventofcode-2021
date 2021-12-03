@@ -2,14 +2,12 @@
 
 (require "../lib.rkt")
 
-(define input
-  (for/list ([b (problem-input 3)])
-    (string->list b)))
+(define input (problem-input 3))
 
-(define bits (length (first input)))
+(define bits (string-length (first input)))
 
 (define (nth-bit nums p n)
-  (let ([bs (map #{list-ref % n} nums)])
+  (let ([bs (map #{string-ref % n} nums)])
     (if (p (count #{char=? % #\1} bs) (/ (length nums) 2))
         #\1 #\0)))
 
@@ -20,11 +18,11 @@
 
 (define (search p)
   (for/fold ([nums input]
-             #:result (chars->binary (first nums)))
+             #:result (string->binary (first nums)))
             ([n (range bits)]
              #:break (singleton? nums))
     (define bit (nth-bit nums p n))
-    (filter #{char=? bit (list-ref % n)} nums)))
+    (filter #{char=? bit (string-ref % n)} nums)))
 
 (define part1
   (* (squimsh >=) (squimsh <)))

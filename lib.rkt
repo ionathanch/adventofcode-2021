@@ -73,6 +73,11 @@
 (define (string->binary str)
   (string->number (string-append "#b" str)))
 
+;; chars->binary : (listof char?) -> number?
+;; Given a list of characters representing the bits of a binary number,
+;; convert it into the number it represents
+(define chars->binary (∘ string->binary list->string))
+
 ;; string->vector : string? -> (vectorof char?)
 (define (string->vector str)
   (list->vector (string->list str)))

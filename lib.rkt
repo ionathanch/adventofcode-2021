@@ -20,8 +20,7 @@
 (define ∂r curryr)
 
 ;; uncurry : (a1 -> ... -> an -> b) -> ((listof a) -> b)
-(define uncurry
-  (curry apply))
+(define uncurry (curry apply))
 (define $ uncurry)
 
 ;; iterate : (a -> a) -> number -> (a -> a)
@@ -61,12 +60,12 @@
 ;; String helpers ;;
 
 ;; string->number* : (or/c string? #f) -> (or/c number? #f)
-(define (string->number* s)
-  (and (string? s) (string->number s)))
+(define string->number*
+  (and/c string? string->number))
 
 ;; string->symbol* : (or/c string? #f) -> (or/c symbol? #f)
-(define (string->symbol* s)
-  (and (string? s) (string->symbol s)))
+(define string->symbol*
+  (and/c string? string->symbol))
 
 ;; string->binary : string? -> number?
 ;; Given a string representation of a binary number,
@@ -105,9 +104,8 @@
   (not (char=? c1 c2)))
 
 ;; char-alphanumeric? : char -> boolean
-(define (char-alphanumeric? c)
-  (or (char-alphabetic? c)
-      (char-numeric? c)))
+(define char-alphanumeric?
+  (or/c char-alphabetic? char-numeric?))
 
 
 ;; Number helpers ;;
@@ -159,7 +157,9 @@
 
 ;; singleton? : (listof any) -> boolean
 (define (singleton? lst)
-  (= 1 (length lst)))
+  (match lst
+    [(list _) true]
+    [else #f]))
 
 ;; snoc : (listof any) -> any -> (listof any)
 ;; Append element to the back of the list.

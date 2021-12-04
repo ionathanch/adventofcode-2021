@@ -93,6 +93,10 @@
                                        (cadar replaces))
                        (rest replaces))))
 
+;; string-words : string? -> (listof string?)
+(define (string-words str)
+  (string-split str #rx" +"))
+
 ;; string-lines : string? -> (listof string?)
 (define (string-lines str)
   (string-split str "\n"))

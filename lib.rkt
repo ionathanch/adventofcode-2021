@@ -4,10 +4,7 @@
   threading
   (only-in data/queue
            make-queue
-           enqueue!)
-  (only-in 2htdp/batch-io
-           read-lines
-           read-file))
+           enqueue!))
 
 (provide (all-from-out threading)
          (all-defined-out))
@@ -35,15 +32,15 @@
 ;; Return contents of input file input/xx.txt as lines of strings.
 (define (problem-input n [suffix ""])
   (let* ([filename (~a n #:min-width 2 #:align 'right #:left-pad-string "0")]
-         [path     (string-append "../input/" filename suffix ".txt")])
-    (read-lines path)))
+         [path     (build-path ".." "input" (format "~a~a.txt" filename suffix))])
+    (file->lines path)))
 
 ;; problem-input-all : number? -> string?
 ;; Return contents of input file input/xx.txt as a single string.
 (define (problem-input-all n [suffix ""])
   (let* ([filename (~a n #:min-width 2 #:align 'right #:left-pad-string "0")]
-         [path     (string-append "../input/" filename suffix ".txt")])
-    (read-file path)))
+         [path     (build-path ".." "input" (format "~a~a.txt" filename suffix))])
+    (file->string path)))
 
 ;; problem-input-grouped : number? -> (listof string?)
 ;; Return contents of input file input/xx.txt as a list of strings,

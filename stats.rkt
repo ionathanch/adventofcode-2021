@@ -1,24 +1,20 @@
 #lang curly-fn racket
 
-(require threading
-         (only-in 2htdp/batch-io
-                  read-lines))
+(require threading)
 
-(define (source-input n)
-  (let* ([filename (~a n #:min-width 2 #:align 'right #:left-pad-string "0")]
-         [path     (string-append "src/" filename ".rkt")])
-    (read-lines path)))
+(define rkt-files
+  (filter #{regexp-match #rx".*\\.rkt$" (path->string %)}
+          (directory-list "src/" #:build? #{build-path "src/" %})))
 
 (define srcs
-  (~>> (range 1 11)
-       (map (λ~>> source-input
-                  (filter non-empty-string?)))))
+  (map (λ~>> file->lines
+             (filter non-empty-string?))
+       rkt-files))
 
 (define src-lengths (map length srcs))
 
 (define src-widths
-  (~>> srcs
-       (apply append)
+  (~>> (apply append srcs)
        (map string-length)
        (sort _ <=)))
 

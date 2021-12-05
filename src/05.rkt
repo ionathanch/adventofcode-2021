@@ -6,10 +6,7 @@
 
 (define lines
   (for/list ([line input])
-    (~> line
-        (regexp-match #px"(\\d+),(\\d+) -> (\\d+),(\\d+)" _)
-        rest
-        (map string->number _))))
+    (map string->number (regexp-match* #px"(\\d+)" line))))
 
 (define-values (hvs diags)
   (partition #{or (= (first %) (third %))
@@ -24,10 +21,10 @@
   (match hv
     [`(,x ,y1 ,x ,y2)
      (for ([y (range (min y1 y2) (add1 (max y1 y2)))])
-       (hash-update! grid (list x y) add1 0))]
+       (hash-update! grid `(,x ,y) add1 0))]
     [`(,x1 ,y ,x2 ,y)
      (for ([x (range (min x1 x2) (add1 (max x1 x2)))])
-       (hash-update! grid (list x y) add1 0))]))
+       (hash-update! grid `(,x ,y) add1 0))]))
 
 (define part1 (count-crosses grid))
 
@@ -40,7 +37,7 @@
        (if (>= y2 y1) (values add1 1) (values sub1 -1)))
      (for ([x (range x1 (x-offset x2) x-step)]
            [y (range y1 (y-offset y2) y-step)])
-       (hash-update! grid (list x y) add1 0))]))
+       (hash-update! grid `(,x ,y) add1 0))]))
 
 (define part2 (count-crosses grid))
 

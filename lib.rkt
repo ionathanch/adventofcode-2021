@@ -122,8 +122,8 @@
 ;; sum : (listof number) -> number
 (define (sum ns) (apply + ns))
 
-;; != : number -> number -> boolean
-(define (!= n1 n2)
+;; ≠ : number -> number -> boolean
+(define (≠ n1 n2)
   (not (= n1 n2)))
 
 ;; nzero? : number -> boolean

@@ -191,13 +191,20 @@
             (cons (f v (first lst)) lst))
           (list init) lst)))
 
-;; list-ref* : (listof a) -> number -> a -> a
+;; list-ref* : (listof a) -> number -> a -> (or a #f)
 ;; Same as list-ref, except a default value is provided
 ;; if the index is beyond the length of the list.
-(define (list-ref* lst pos failure-result)
+(define (list-ref* lst pos [failure-result #f])
   (if (>= pos (length lst))
       failure-result
       (list-ref lst pos)))
+
+;; first* : (listof a) -> (or a #f)
+;; Get first of list or default if empty
+(define (first* lst [failure-result #f])
+  (match lst
+    ['() failure-result]
+    [`(,hd ,@_) hd]))
 
 ;; repeat : number -> (listof any) -> (listof any)
 (define (repeat m lst)

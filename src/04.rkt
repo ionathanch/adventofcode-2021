@@ -28,26 +28,22 @@
 (define (score board)
   (sum (filter number? (apply append board))))
 
-(define part1
+(define-values (part1 part2)
   (for/fold ([boards boards]
              [winner #f]
              [winning #f]
-             #:result (* (score winner) winning))
-            ([n order]
-             #:break winner)
-    (define boards*
-      (map #{blot % n} boards))
-    (values boards* (findf winner? boards*) n)))
-
-(define part2
-  (for/fold ([boards boards]
              [loser #f]
              [losing #f]
-             #:result (* (score loser) losing))
+             #:result (values (* (score winner) winning)
+                              (* (score loser) losing)))
             ([m order]
              #:break (empty? boards))
     (define boards*
       (map #{blot % m} boards))
-    (values (filter (∘ not winner?) boards*) (first boards*) m)))
+    (define-values (winners losers)
+      (partition winner? boards*))
+    (values losers
+            (or winner (first* winners)) (if winner winning m)
+            (first* winners) m)))
 
 (show-solution part1 part2)

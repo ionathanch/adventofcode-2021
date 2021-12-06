@@ -8,8 +8,6 @@
       string-csv
       (map string->number _)))
 
-(define assocf (∘ cdr assoc))
-
 (define fish
   (for/list ([age (range 0 9)])
     (cons age (count #{= % age} input))))

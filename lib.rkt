@@ -119,6 +119,20 @@
 ;; sum : (listof number) -> number
 (define (sum ns) (apply + ns))
 
+;; maximum : (listof number) -> number
+(define (maximum ns) (apply max ns))
+
+;; minimum : (listof number) -> number
+(define (minimum ns) (apply min ns))
+
+;; mean : (listof number) -> number
+(define (mean ns)
+  (/ (sum ns) (length ns)))
+
+;; median : (listof number) -> number
+(define (median ns)
+  (list-ref (sort ns <) (/ (length ns) 2)))
+
 ;; ≠ : number -> number -> boolean
 (define (≠ n1 n2)
   (not (= n1 n2)))

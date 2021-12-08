@@ -7,7 +7,7 @@
   (for/list ([entry (problem-input 8)])
     (match-let ([(list patterns outputs) (string-split entry " | ")])
       (list (map string->list (string-words patterns))
-            (map (∘ #{sort % char<?} string->list) (string-words outputs))))))
+            (map #{sort (string->list %) char<?} (string-words outputs))))))
 
 (define part1
   (~>> input
@@ -28,14 +28,14 @@
     (set-first (set-subtract seven one)))
   (define bottom
     (set-first (set-subtract (apply set-intersect fives) four `(,top))))
+  (define middle
+    (set-first (set-subtract (apply set-intersect fives) `(,top ,bottom))))
   (define top-left
-    (set-first (set-subtract (apply set-intersect sixes) one `(,top ,bottom))))
+    (set-first (set-subtract four one `(,middle))))
   (define bottom-right
     (set-first (set-subtract (apply set-intersect sixes) `(,top ,bottom ,top-left))))
   (define top-right
     (set-first (set-remove one bottom-right)))
-  (define middle
-    (set-first (set-subtract four one `(,top-left))))
   (define bottom-left
     (set-first (set-subtract eight `(,top ,bottom ,top-left ,top-right ,bottom-right ,middle))))
   (hash (sort one   char<?) #\1

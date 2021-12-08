@@ -22,32 +22,24 @@
     (filter #{= (length %) segments} patterns))
   (define-values (one four seven eight)
     (values (digit 2) (digit 4) (digit 3) (digit 7)))
-  (define-values (fives sixes)
-    (values (digits 5) (digits 6)))
-  (define top
-    (set-first (set-subtract seven one)))
-  (define bottom
-    (set-first (set-subtract (apply set-intersect fives) four `(,top))))
-  (define middle
-    (set-first (set-subtract (apply set-intersect fives) `(,top ,bottom))))
-  (define top-left
-    (set-first (set-subtract four one `(,middle))))
-  (define bottom-right
-    (set-first (set-subtract (apply set-intersect sixes) `(,top ,bottom ,top-left))))
-  (define top-right
-    (set-first (set-remove one bottom-right)))
-  (define bottom-left
-    (set-first (set-subtract eight `(,top ,bottom ,top-left ,top-right ,bottom-right ,middle))))
-  (hash (sort one   char<?) #\1
+  (define fives (apply set-intersect (digits 5)))
+  (define sixes (apply set-intersect (digits 6)))
+  (define three (set-union one  fives))
+  (define nine  (set-union four sixes))
+  (define five  (set-union (set-subtract four  one) sixes))
+  (define six   (set-union (set-subtract eight one) sixes))
+  (define zero  (set-union (set-subtract eight three) (set-subtract eight four) one))
+  (define two   (set-union (set-subtract zero  sixes) fives))
+  (hash (sort zero  char<?) #\0
+        (sort one   char<?) #\1
+        (sort two   char<?) #\2
+        (sort three char<?) #\3
         (sort four  char<?) #\4
+        (sort five  char<?) #\5
+        (sort six   char<?) #\6
         (sort seven char<?) #\7
         (sort eight char<?) #\8
-        (sort (set-subtract eight `(,top-left  ,bottom-right)) char<?) #\2
-        (sort (set-subtract eight `(,top-left  ,bottom-left))  char<?) #\3
-        (sort (set-subtract eight `(,top-right ,bottom-left))  char<?) #\5
-        (sort (set-remove eight middle)      char<?) #\0
-        (sort (set-remove eight top-right)   char<?) #\6
-        (sort (set-remove eight bottom-left) char<?) #\9))
+        (sort nine  char<?) #\9))
 
 (define part2
   (for/sum ([entry input])

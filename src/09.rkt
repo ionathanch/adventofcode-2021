@@ -4,18 +4,18 @@
          "../lib.rkt")
 
 (define input
-  (~>> (problem-input 9)
-       (map string->list)
-       (map #{map char->number %})))
+  (for/vector ([row (problem-input 9)])
+    (for/vector ([col (string->list row)])
+      (char->number col))))
 
-(define rows (length input))
-(define cols (length (first input)))
+(define rows (vector-length input))
+(define cols (vector-length (vector-ref input 0)))
 
 (define (grid-ref grid row col [default +inf.0])
   (if (or (< row 0) (>= row rows)
           (< col 0) (>= col cols))
       default
-      (list-ref (list-ref grid row) col)))
+      (vector-ref (vector-ref grid row) col)))
 
 (define (neighbours row col)
   (list (cons (sub1 row) col)
@@ -44,16 +44,14 @@
                 (set-add seen loc))))))
 
 (define-values (part1 part2)
-  (for/fold ([risk 0]
-             [basins '()]
-             #:result (values risk (apply * (take (sort basins >) 3))))
-            ([row (range rows)])
-    (for/fold ([risk risk]
-               [basins basins])
-              ([col (range cols)])
-      (if (low? row col)
-          (values (+ (add1 (grid-ref input row col)) risk)
-                  (cons (basin row col) basins))
-          (values risk basins)))))
+  (for*/fold ([risk 0]
+              [basins '()]
+              #:result (values risk (apply * (take (sort basins >) 3))))
+             ([row (range rows)]
+              [col (range cols)])
+    (if (low? row col)
+        (values (+ (add1 (grid-ref input row col)) risk)
+                (cons (basin row col) basins))
+        (values risk basins))))
 
 (show-solution part1 part2)

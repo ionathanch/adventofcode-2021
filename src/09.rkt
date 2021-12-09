@@ -1,6 +1,7 @@
 #lang curly-fn racket
 
-(require racket/set "../lib.rkt")
+(require racket/set
+         "../lib.rkt")
 
 (define input
   (~>> (problem-input 9)
@@ -27,18 +28,20 @@
               (grid-ref input (car %) (cdr %))}
           (neighbours row col)))
 
-(define (highers row col)
-  (filter #{and (< (grid-ref input row col)
-                   (grid-ref input (car %) (cdr %) -inf.0)
-                   9)}
-          (neighbours row col)))
+(define (basinic seen loc)
+  (list->set
+   (filter #{and (< (grid-ref input (car %) (cdr %)) 9)
+                 (not (set-member? seen %))}
+           (neighbours (car loc) (cdr loc)))))
 
-(define (basin unseen seen)
-  (match unseen
-    ['() (unique seen)]
-    [(list (and hd (cons row col)) tl ...)
-     (basin (append tl (highers row col))
-            (cons hd seen))]))
+(define (basin row col)
+  (let loop ([unseen (set (cons row col))]
+             [seen (set)])
+    (if (set-empty? unseen)
+        (set-count seen)
+        (let ([loc (set-first unseen)])
+          (loop (set-union (basinic seen loc) (set-rest unseen))
+                (set-add seen loc))))))
 
 (define-values (part1 part2)
   (for/fold ([risk 0]
@@ -50,7 +53,7 @@
               ([col (range cols)])
       (if (low? row col)
           (values (+ (add1 (grid-ref input row col)) risk)
-                  (cons (length (basin `((,row . ,col)) '())) basins))
+                  (cons (basin row col) basins))
           (values risk basins)))))
 
 (show-solution part1 part2)

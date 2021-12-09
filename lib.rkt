@@ -4,7 +4,10 @@
   threading
   (only-in data/queue
            make-queue
-           enqueue!))
+           enqueue!)
+  (only-in racket/set
+           list->set
+           set->list))
 
 (provide (all-from-out threading)
          (all-defined-out))
@@ -74,6 +77,11 @@
 ;; Given a list of characters representing the bits of a binary number,
 ;; convert it into the number it represents
 (define chars->binary (∘ string->binary list->string))
+
+;; char->number : char? -> number?
+;; Convert a digit character into its integral value
+(define (char->number c)
+  (- (char->integer c) (char->integer #\0)))
 
 ;; string->vector : string? -> (vectorof char?)
 (define (string->vector str)
@@ -257,6 +265,11 @@
   (let ([Q (make-queue)])
     (for-each (∂ enqueue! Q) lst)
     Q))
+
+;; unique : (listof a) -> (listof a)
+;; Return a list of unique items; not guaranteed to be stable
+(define (unique lst)
+  (set->list (list->set lst)))
 
 
 ;; Vector helpers ;;

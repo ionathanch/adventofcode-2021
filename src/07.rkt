@@ -12,5 +12,5 @@
   (let ([target (floor (target input))])
     (sum (map #{fuel (abs (- % target))} input))))
 
-(show-solution (total-fuel mean identity)
+(show-solution (total-fuel median identity)
                (total-fuel mean #{/ (* % (add1 %)) 2}))

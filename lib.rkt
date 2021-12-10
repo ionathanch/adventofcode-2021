@@ -139,7 +139,7 @@
 
 ;; median : (listof number) -> number
 (define (median ns)
-  (list-ref (sort ns <) (/ (length ns) 2)))
+  (list-ref (sort ns <) (floor (/ (length ns) 2))))
 
 ;; ≠ : number -> number -> boolean
 (define (≠ n1 n2)

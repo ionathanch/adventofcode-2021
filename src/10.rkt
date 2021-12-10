@@ -8,6 +8,8 @@
   (assocf char '((#\) . 3) (#\] . 57) (#\} . 1197) (#\> . 25137))))
 (define (incomplete-score char)
   (assocf char '((#\( . 1) (#\[ . 2) (#\{ . 3) (#\< . 4))))
+(define (matching open close)
+  (member `(,open ,close) '((#\( #\)) (#\[ #\]) (#\{ #\}) (#\< #\>))))
 
 (define (autocomplete-score stack)
   (for/fold ([score 0])
@@ -26,10 +28,7 @@
         [(cons char line)
          (match* (char stack)
            [((or #\( #\[ #\{ #\<) _) (loop (cons char stack) line)]
-           [(#\) (cons #\( stack)) (loop stack line)]
-           [(#\] (cons #\[ stack)) (loop stack line)]
-           [(#\} (cons #\{ stack)) (loop stack line)]
-           [(#\> (cons #\< stack)) (loop stack line)]
+           [(close (cons open stack)) #:when (matching open close) (loop stack line)]
            [(_ _) (values (+ corrupted (corrupted-score char)) incomplete)])]))))
 
 (show-solution part1 part2)

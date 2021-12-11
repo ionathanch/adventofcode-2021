@@ -194,14 +194,8 @@
 (define (snoc lst v)
   (append lst (list v)))
 
-;; range* : number? -> (listof number?)
-;; range* : number? -> number? -> [number?] -> (listof number?)
-;; Like range, but with an inclusive right end
-(define-syntax range*
-  (syntax-rules ()
-    [(_ n) (range (add1 n))]
-    [(_ from to) (range from (add1 to))]
-    [(_ from to step) (range from (add1 to) step)]))
+;; range* : number? -> number? -> [number?] -> (streamof number?)
+(define range* in-inclusive-range)
 
 ;; scanl : (a -> a -> a) -> (listof a) -> (listof a)
 ;; foldl that accumulates partial results in a list

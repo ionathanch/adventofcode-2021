@@ -51,6 +51,12 @@
 (define (problem-input-grouped n [suffix ""])
   (string-split (problem-input-all n suffix) "\n\n"))
 
+;; problem-input-grouped-lines : number? -> (listof (listof string?))
+;; Return contents of input file input/xx.txt as a list of a list of strings,
+;; where each list is the group of lines separated by newlines.
+(define (problem-input-grouped-lines n [suffix ""])
+  (map (λ (group) (string-split group "\n")) (problem-input-grouped n suffix)))
+
 ;; show-solution : a -> b -> void
 ;; Print part1 and part2 on separate lines.
 (define (show-solution part1 part2)

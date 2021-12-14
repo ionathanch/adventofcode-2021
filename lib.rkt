@@ -89,6 +89,11 @@
 (define (char->number c)
   (- (char->integer c) (char->integer #\0)))
 
+;; char->symbol : char? -> symbol?
+;; Convert a character into the corresponding symbol
+(define (char->symbol c)
+  (string->symbol (list->string (list c))))
+
 ;; string->vector : string? -> (vectorof char?)
 (define (string->vector str)
   (list->vector (string->list str)))

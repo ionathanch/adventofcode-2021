@@ -1,7 +1,6 @@
 #lang curly-fn racket
 
-(require racket/set
-         "../lib.rkt")
+(require "../lib.rkt")
 
 (struct line (axis coord))
 

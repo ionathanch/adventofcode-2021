@@ -21,7 +21,7 @@
 (define (grid-set! grid row col v)
   (grid-update! grid row col (const v)))
 
-(define (adjs grid row col)
+(define (adjs row col)
   (for*/list ([r (range* (max 0 (sub1 row)) (min (sub1 rows) (add1 row)))]
               [c (range* (max 0 (sub1 col)) (min (sub1 cols) (add1 col)))])
     (cons r c)))
@@ -37,7 +37,7 @@
               [col (range cols)])
     (if (and (not (set-member? flashed (cons row col)))
              (> (grid-ref octopodes row col) 9)
-             (for ([adj (adjs octopodes row col)])
+             (for ([adj (adjs row col)])
                (grid-update! octopodes (car adj) (cdr adj) add1)))
         (set-add newly-flashed (cons row col))
         newly-flashed)))

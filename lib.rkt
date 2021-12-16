@@ -65,6 +65,10 @@
 
 ;; String helpers ;;
 
+;; string-empty? : string? -> boolean?
+(define (string-empty? s)
+  (string=? s ""))
+
 ;; string->number* : (or/c string? #f) -> (or/c number? #f)
 (define string->number*
   (and/c string? string->number))

@@ -97,86 +97,67 @@
     ['right (left-add-rightmost! n (pair-parent p))]
     ['left (up-add-rightmost! n (pair-parent p))]))
 
-;; number? pair? -> (or/c 'exploded 'continue)
-;; Explodes pairs at depth 4 or greater
+;; number? pair? -> (or/c void? #f)
+;; Explodes pairs at depth 4 or greater or returns false
 (define (explode depth p)
   (match p
     [(pair 'left parent (? number? left) (? number? right))
      #:when (>= depth 4)
      (right-add-leftmost! right parent)
      (up-add-rightmost! left parent)
-     (set-pair-left! parent 0)
-     'exploded]
+     (set-pair-left! parent 0)]
     [(pair 'right parent (? number? left) (? number? right))
      #:when (>= depth 4)
      (left-add-rightmost! left parent)
      (up-add-leftmost! right parent)
-     (set-pair-right! parent 0)
-     'exploded]
-    [(pair type parent (? number? left) (? number? right))
-     'continue]
+     (set-pair-right! parent 0)]
+    [(pair type parent (? number? left) (? number? right)) #f]
     [(pair type parent (? number? left) (? pair? right))
      (explode (add1 depth) right)]
     [(pair type parent (? pair? left) (? number? right?))
      (explode (add1 depth) left)]
     [(pair type parent (? pair? left) (? pair? right))
-     (define results
-       (list (explode (add1 depth) left)
-             (explode (add1 depth) right)))
-     (if (member 'exploded results) 'exploded 'continue)]))
+     (or (explode (add1 depth) left)
+         (explode (add1 depth) right))]))
 
 ;; SPLIT ;;
 
 ;; number? pair? -> void?
-;; Effect: Sets left node to new pair consisting of halved number
-;; rounded down and up
+;; Effect: Sets left node to new pair consisting of halved number rounded down and up
 (define (split-left! left p)
   (define halved (/ left 2))
   (set-pair-left! p (pair 'left p (floor halved) (ceiling halved))))
 
 ;; number? pair? -> void?
-;; Effect: Sets right node to new pair consisting of halved number
-;; rounded down and up
+;; Effect: Sets right node to new pair consisting of halved number rounded down and up
 (define (split-right! right p)
   (define halved (/ right 2))
   (set-pair-right! p (pair 'right p (floor halved) (ceiling halved))))
 
-;; pair? -> (or/c 'split 'continue)
-;; Splits leftmost number greater than 10 into a pair of halved numbers
+;; pair? -> (or/c void? #f)
+;; Splits leftmost number greater than 10 into a pair of halved numbers or returns false
 (define (split p)
   (match p
     [(pair type parent (? number? left) (? number? right))
-     (if (>= left 10)
-         (begin (split-left! left p) 'split)
-         (if (>= right 10)
-             (begin (split-right! right p) 'split)
-             'continue))]
+     (or (and (>= left 10) (split-left! left p))
+         (and (>= right 10) (split-right! right p)))]
     [(pair type parent (? number? left) (? pair? right))
-     (if (>= left 10)
-         (begin (split-left! left p) 'split)
-         (split right))]
+     (if (>= left 10) (split-left! left p) (split right))]
     [(pair type parent (? pair? left) (? number? right))
-     (match (split left)
-       ['split 'split]
-       ['continue
-        (if (>= right 10)
-            (begin (split-right! right p) 'split)
-            'continue)])]
+     (or (split left) (and (>= right 10) (split-right! right p)))]
     [(pair type parent (? pair? left) (? pair? right))
-     (match (split left)
-       ['split 'split]
-       ['continue (split right)])]))
+     (or (split left) (split right))]))
 
 ;; REDUCE ;;
 
 ;; pair? -> void?
 ;; Effect: Explodes then splits pair until a fixed point is reached
 (define (reduce p)
-  (let loop ([status 'exploded])
-    (if (symbol=? status 'continue)
-        (unless (symbol=? (split p) 'continue)
-          (loop (explode 0 p)))
-        (loop (explode 0 p)))))
+  (let loop ([exploded #t])
+    (if exploded
+        (loop (explode 0 p))
+        (when (split p)
+          (loop (explode 0 p))))))
 
 ;; MAGNITUDE ;;
 

@@ -37,4 +37,5 @@
   (let*-values ([(weights paths) (dijkstra (make-graph dim) (posn 0 0))])
     (hash-ref weights (posn (sub1 dim) (sub1 dim)))))
 
-(show-solution (shortest-path dim) (shortest-path (* dim 5)))
+(show-solution (time (shortest-path dim))
+               (time (shortest-path (* dim 5))))

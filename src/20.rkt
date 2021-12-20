@@ -22,17 +22,18 @@
               [c (range* (sub1 col) (add1 col))])
     (cons r c)))
 
-(define (square->number pixels)
-  (~>> (map #{match % [#\. "0"] [#\# "1"]} pixels)
-       (apply string-append)
-       string->binary))
-
 (define (image-bounds img)
   (define keys (hash-keys img))
   (define rows (map car keys))
   (define cols (map cdr keys))
   (values (minimum rows) (maximum rows)
           (minimum cols) (maximum cols)))
+
+(define (compute pixels)
+  (~>> (map #{match % [#\. "0"] [#\# "1"]} pixels)
+       (apply string-append)
+       string->binary
+       (vector-ref algorithm)))
 
 (define (show img)
   (define-values (min-row max-row min-col max-col)
@@ -50,20 +51,16 @@
               [col (range* (sub1 min-col) (add1 max-col))])
     (~>> (square row col)
          (map #{hash-ref img % default})
-         square->number
-         (vector-ref algorithm)
+         compute
          (hash-set img* (cons row col)))))
 
-(define part1
-  (let ([img (enhance #\# (enhance #\. image))])
-    (count #{char=? % #\#} (hash-values img))))
+(define (enhance* n)
+  (time
+   (for/fold ([img image]
+              [default #\.]
+              #:result (count #{char=? % #\#} (hash-values img)))
+             ([_ (range n)])
+     (values (enhance default img)
+             (match default [#\. #\#] [#\# #\.])))))
 
-(define part2
-  (for/fold ([img image]
-             [default #\.]
-             #:result (count #{char=? % #\#} (hash-values img)))
-            ([_ (range 50)])
-    (values (enhance default img)
-            (match default [#\. #\#] [#\# #\.]))))
-
-(show-solution part1 part2)
+(show-solution (enhance* 2) (enhance* 50))

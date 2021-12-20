@@ -26,11 +26,6 @@
   (match-let ([(list x y z) change])
     (+ (abs x) (abs y) (abs z))))
 
-(define (deltas region)
-  (for*/set ([beacon1 region]
-             [beacon2 region])
-    (abs (magnitude (delta beacon1 beacon2)))))
-
 (define rotations
   (for*/fold ([rotations '()])
              ([dx '(1 -1)]
@@ -51,15 +46,14 @@
     (values region (map #{set-map region %} rotations))))
 
 (define (combine region1 region2)
-  (and (>= (set-count (set-intersect (deltas region1) (deltas region2))) 66)
-       (for*/or ([beacon1 region1]
-                 [beacon2 region2])
-         (define change (delta beacon1 beacon2))
-         (define shifted-region2
-           (set-map region2 #{shift % (delta beacon1 beacon2)}))
-         (and (>= (set-count (set-intersect region1 shifted-region2)) 12)
-              (cons (set-union region1 shifted-region2)
-                    change)))))
+  (for*/or ([beacon1 region1]
+            [beacon2 region2])
+    (define change (delta beacon1 beacon2))
+    (define shifted-region2
+      (set-map region2 #{shift % (delta beacon1 beacon2)}))
+    (and (>= (set-count (set-intersect region1 shifted-region2)) 12)
+         (cons (set-union region1 shifted-region2)
+               change))))
 
 (define-values (part1 part2)
   (time

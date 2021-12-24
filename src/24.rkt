@@ -2,6 +2,7 @@
 
 (require "../lib.rkt")
 
+#;
 (define input
   (for/list ([line (problem-input 24)])
     (match (string-words line)
@@ -12,6 +13,7 @@
              (or (string->number val)
                  (string->symbol val)))])))
 
+#;
 (define (monad model)
   (define (get state val)
     (if (number? val) val (hash-ref state val)))
@@ -56,26 +58,29 @@
                   (rest instrs))])))
   (monad model (hash 'w 0 'x 0 'y 0 'z 0) input))
 
-(define As '(14 10 13 -8 11 11 14 -11 14 -1 -8 -5 -16 -6))
-(define Bs '(12 9 8 3 0 11 10 13 3 10 10 14 6 5))
-
-(define (monad* model)
-  (for/fold ([z 0])
-            ([w model]
-             [A As]
-             [B Bs])
-    (define x (if (= w (- (remainder z 26) A)) 0 1))
-    (+ (* x (+ w B))
-       (* (add1 (* x 25))
-          (quotient z (if (positive? A) 1 26))))))
+#| w3 == w4
+ | w7  - 1 == w8
+ | w10 - 2 == w9
+ | w11 - 3 == w6
+ | w5  - 5 == w12
+ | w2  - 7 == w13
+ | w14 - 6 == w1
+ |#
 
 (define part1
-  (let loop ([model 99999999999999])
-    (define model* (number->digits model))
-    (if (member 0 model*)
-        (loop (sub1 model))
-        (if (zero? (monad* model*))
-            model
-            (loop (sub1 model))))))
+  (let* ([w2 9] [w3 9] [w4 9] [w5 9] [w7 9] [w10 9] [w11 9] [w14 9]
+         [w13 (- w2 7)] [w12 (- w5 5)] [w8 (- w7 1)] [w9 (- w10 2)]
+         [w6 (- w11 3)] [w1 (- w14 6)])
+    (string->number
+     (format "~a~a~a~a~a~a~a~a~a~a~a~a~a~a"
+             w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14))))
 
-(show-solution #f #f)
+(define part2
+  (let* ([w1 1] [w3 1] [w4 1] [w6 1] [w8 1] [w9 1] [w12 1] [w13 1]
+         [w14 (+ w1 6)] [w11 (+ w6 3)] [w7 (+ w8 1)] [w10 (+ w9 2)]
+         [w5 (+ w12 5)] [w2 (+ w13 7)])
+    (string->number
+     (format "~a~a~a~a~a~a~a~a~a~a~a~a~a~a"
+             w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14))))
+
+(show-solution part1 part2)
